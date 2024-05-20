@@ -1,9 +1,9 @@
 const express = require('express');
 const serverless = require('serverless-http');
-const userRoutes = require('../routes/user')
+const testRoutes = require('../routes/test')
 
 const app = express();
 
-app.use('/.netlify/functions/hello', userRoutes);
+app.use('/.netlify/functions/hello', testRoutes);
 module.exports.handler = serverless(app);
 
