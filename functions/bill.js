@@ -22,7 +22,7 @@ const app = express();
 
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
-app.use(express.static(path.resolve('./public')));
+app.use(express.static(path.resolve('./docs')));
 
 app.use(cors());
 app.use(express.json());

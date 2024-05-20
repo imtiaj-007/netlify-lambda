@@ -101,10 +101,10 @@ const getUserBillsById = async (req, res) => {
                         message: 'User Not Found...! Invalid user ID'
                     });
                 }
-                user = await Users.findById( _id );
+                user = await Users.findById(_id);
             }
         }
-        if (!user) 
+        if (!user)
             return res.status(400).json({
                 success: false,
                 message: 'User Not Found...!'
@@ -283,16 +283,10 @@ const sendPDF = async (req, res) => {
             });
         }
 
-        // Send the PDF file as a response
-        res.contentType('application/pdf');
-        res.sendFile(filePath);
-
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.log(`Error deleting file: ${err}`);
-            }
-        });
-
+        return res.status(200).json({
+            success: true,
+            pdfUrl: filePath
+        })
     } catch (error) {
         console.log(error);
         return res.status(500).json({
