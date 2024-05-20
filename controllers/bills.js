@@ -270,7 +270,7 @@ const sendPDF = async (req, res) => {
         const user = await Users.findById(bill.userID);
 
         const fileName = `${Date.now()}.pdf`;
-        const filePath = path.resolve(`./docs/bills/${fileName}`);
+        const filePath = `../docs/bills/${fileName}`;
 
         // Generate the PDF file
         await generatePdf(filePath, bill, user);
@@ -298,7 +298,7 @@ const sendPDF = async (req, res) => {
 
 const generatePdf = async (filePath, billObj, userObj) => {
     try {
-        const htmlTemplate = fs.readFileSync(path.resolve('../views/billTemplate.html'), 'utf8');
+        const htmlTemplate = fs.readFileSync('../views/billTemplate.html', 'utf8');
         const html = htmlTemplate.replace(/{{customerId}}/g, userObj._id)
             .replace(/{{customerName}}/g, userObj.customerName)
             .replace(/{{email}}/g, userObj.email)
