@@ -269,24 +269,27 @@ const sendPDF = async (req, res) => {
         const bill = await Bills.findById(_id);
         const user = await Users.findById(bill.userID);
 
-        const fileName = `${Date.now()}.pdf`;
-        const filePath = `/docs/bills/${fileName}`;
+        const fileName = `${_id}.pdf`;
+        const filePath = path.resolve(`docs/bills/${fileName}`);
 
-        // Generate the PDF file
-        await generatePdf(filePath, bill, user);
-
-        // Check if the PDF file exists
         if (!fs.existsSync(filePath)) {
-            return res.status(404).json({
-                success: false,
-                message: 'PDF file not found'
-            });
-        }
 
+            // Generate the PDF file
+            await generatePdf(filePath, bill, user);
+
+            // Check if the PDF file exists
+            if (!fs.existsSync(filePath)) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'PDF file not found'
+                });
+            }
+        }
         return res.status(200).json({
             success: true,
-            pdfUrl: filePath
-        })
+            pdfLink: filePath
+        });
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -298,7 +301,9 @@ const sendPDF = async (req, res) => {
 
 const generatePdf = async (filePath, billObj, userObj) => {
     try {
-        const htmlTemplate = fs.readFileSync('../views/billTemplate.html', 'utf8');
+        const htmlPath = path.resolve('views/billTemplate.html');
+        const htmlTemplate = fs.readFileSync(htmlPath, 'utf8');
+
         const html = htmlTemplate.replace(/{{customerId}}/g, userObj._id)
             .replace(/{{customerName}}/g, userObj.customerName)
             .replace(/{{email}}/g, userObj.email)
@@ -319,8 +324,6 @@ const generatePdf = async (filePath, billObj, userObj) => {
             data: { billObj },
             path: filePath,
         };
-
-        // Generate the PDF
         await pdf.create(document, options);
 
     } catch (error) {
