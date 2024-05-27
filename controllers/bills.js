@@ -270,7 +270,7 @@ const sendPDF = async (req, res) => {
         const user = await Users.findById(bill.userID);
 
         const fileName = `${Date.now()}.pdf`;
-        const filePath = `../docs/bills/${fileName}`;
+        const filePath = `/docs/bills/${fileName}`;
 
         // Generate the PDF file
         await generatePdf(filePath, bill, user);
