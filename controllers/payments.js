@@ -116,6 +116,11 @@ const getLastPayment = async (req, res) => {
 
         const data = await Payments.find({ userID }).sort({ createdAt: -1 }).limit(1);
 
+        if (data.length === 0) return res.status(404).json({
+            success: false,
+            message: "No payment record found !"
+        })
+
         const { billNo } = data[0];
         const bill = await Bills.findById(billNo);
 
