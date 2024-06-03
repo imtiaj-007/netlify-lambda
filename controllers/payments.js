@@ -20,6 +20,12 @@ const getPayments = async (req, res) => {
                 user = await Users.findOne({ email: searchID });
             else
                 user = await Users.findOne({ _id: searchID });
+
+            if(!user) return res.status(404).json({
+                success: false,
+                message: 'User not found...!',
+                error
+            });
             queryObj = { ...queryObj, userID: user._id };
         }
 
@@ -143,36 +149,10 @@ const sendPdf = async (req, res) => {
         const { _id } = req.params;
         const receipt = await Payments.findById(_id);
 
-        const fileName = `${_id}.pdf`;
-        const filePath = path.resolve(`docs/payments/${fileName}`);
-
-        if (!fs.existsSync(filePath)) {
-
-            // Generate the PDF file
-            await generatePdf(filePath, receipt);
-
-            // Check if the PDF file exists
-            if (!fs.existsSync(filePath)) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'PDF file not found'
-                });
-            }
-        }
         return res.status(200).json({
             success: true,
-            pdfLink: filePath
-        })
-
-        // Send the PDF file as a response
-        // res.contentType('application/pdf');
-        // res.sendFile(filePath);
-
-        // fs.unlink(filePath, (err) => {
-        //     if (err) {
-        //       console.error(`Error deleting file: ${err}`);
-        //     } 
-        // });
+            receipt
+        });
 
     } catch (error) {
         console.log(error);
